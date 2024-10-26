@@ -1,0 +1,64 @@
+/* Home.css */
+
+/* Apply background image to home container */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('../public/images/DOODOO.webp'); /* Assumes background.png is in the public/images folder */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+/* Timer display in the top-left corner */
+.timer-display {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Display window styling */
+.display-window {
+    width: 300px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
+
+.display-window h1 {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+}
+
+/* Input field styling */
+.input-field {
+    width: 300px;
+    height: 40px;
+    font-size: 18px;
+    padding: 5px;
+    text-align: center;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Gray out the input field when disabled */
+.input-field:disabled {
+    background-color: #e0e0e0;
+    color: #666;
+    cursor: not-allowed;
+}
