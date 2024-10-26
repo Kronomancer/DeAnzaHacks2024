@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './Finish.css';
+import '../Styling/Finish.css';
 
 const Finish = () => {
     const navigate = useNavigate();

@@ -7,7 +7,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url('../public/images/DOODOO.webp'); /* Assumes background.png is in the public/images folder */
+    background-image: url('/public/images/DOODOO.webp'); /* Assumes background.png is in the public/images folder */
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

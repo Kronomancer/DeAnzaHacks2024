@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Home.css';
+import '../Styling/Home.css';
 
 const Home = () => {
     const [currentWord, setCurrentWord] = useState("Loading...");
     const [userInput, setUserInput] = useState("");
     const [words, setWords] = useState([]);
-    const [timeLeft, setTimeLeft] = useState(3); // 60 seconds timer
+    const [timeLeft, setTimeLeft] = useState(60); // 60 seconds timer
     const [isTypingStarted, setIsTypingStarted] = useState(false);
     const [isInputDisabled, setIsInputDisabled] = useState(false);
     const [wordsTyped, setWordsTyped] = useState(0);

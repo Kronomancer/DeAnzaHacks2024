@@ -1,0 +1,34 @@
+/* Start.css */
+
+.start-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-image: url('/public/images/start_background.webp'); /* Path to image in public folder */
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent repeating */
+    text-align: center;
+}
+
+.start-image {
+    width: 200px; /* Adjust size as needed */
+    margin-bottom: 20px; /* Space between image and button */
+}
+
+.start-button {
+    font-size: 24px;
+    padding: 15px 30px;
+    cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.start-button:hover {
+    background-color: #45a049;
+}
