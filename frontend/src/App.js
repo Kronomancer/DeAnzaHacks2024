@@ -3,7 +3,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Start from './Components/Start';
-import Home from './Components/Home';
+import Play from './Components/Play';
 import Finish from './Components/Finish';
 import './Styling/App.css';
 
@@ -13,7 +13,7 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Start />} />
-                    <Route path="/home" element={<Home />} />
+                    <Route path="/play" element={<Play />} />
                     <Route path="/finish" element={<Finish />} />
                 </Routes>
             </Router>

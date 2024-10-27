@@ -8,13 +8,14 @@ const Start = () => {
     const navigate = useNavigate();
 
     const handleStart = () => {
-        navigate('/home');
+        navigate('/play');
     };
 
     return (
         <div className="start-container">
+            <h1 className="start-title">LuneType</h1>
             <button className="start-button" onClick={handleStart}>
-                Start
+                START
             </button>
         </div>
     );

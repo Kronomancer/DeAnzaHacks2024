@@ -1,3 +1,6 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 /* Start.css */
 
 .start-container {
@@ -6,20 +9,29 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-image: url('/public/images/start_background.webp'); /* Path to image in public folder */
-    background-size: cover; /* Cover the entire container */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent repeating */
+    background-image: url('/public/images/start.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     text-align: center;
 }
 
-.start-image {
-    width: 200px; /* Adjust size as needed */
-    margin-bottom: 20px; /* Space between image and button */
+.start-title {
+    font-family: 'Press Start 2P', sans-serif; /* Typing/Game themed font */
+    font-size: 55px; /* Large, prominent size */
+    color: #ffffff; /* White color for contrast */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Adds depth */
+    margin-bottom: 40px; /* Space between title and button */
+    text-shadow: 
+        -2px -2px 0 black,   /* Top-left */
+         2px -2px 0 black,   /* Top-right */
+        -2px  2px 0 black,   /* Bottom-left */
+         2px  2px 0 black;   /* Bottom-right */
 }
 
 .start-button {
     font-size: 24px;
+    font-family: 'Press Start 2P', sans-serif; /* Typing/Game themed font */
     padding: 15px 30px;
     cursor: pointer;
     background-color: #4caf50;

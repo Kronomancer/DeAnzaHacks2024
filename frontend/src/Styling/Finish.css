@@ -4,14 +4,25 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #f8f9fa;
-    color: #333;
+    background-image: url('/public/images/finish.webp');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    text-align: center;
 }
 
 .finish-container h1 {
-    font-size: 36px;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 70px;
+    color: red;
     margin-bottom: 20px;
+    text-shadow: 
+        -2px -2px 0 white,   /* Top-left */
+         2px -2px 0 white,   /* Top-right */
+        -2px  2px 0 white,   /* Bottom-left */
+         2px  2px 0 white;   /* Bottom-right */
 }
+
 
 .finish-container p {
     font-size: 24px;
@@ -19,6 +30,7 @@
 }
 
 .play-again-button {
+    font-family: 'Press Start 2P', sans-serif; /* Typing/Game themed font */
     padding: 10px 20px;
     font-size: 18px;
     color: #fff;

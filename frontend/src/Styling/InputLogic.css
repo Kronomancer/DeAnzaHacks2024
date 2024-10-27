@@ -1,0 +1,35 @@
+.input-logic-container {
+    display: inline-block;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 1.5rem;
+    color: white;
+    text-align: center;
+  }
+  
+  .text-display {
+    display: inline-block;
+    color: white;
+  }
+  
+  .correct {
+    color: green;
+  }
+  
+  .incorrect {
+    color: red;
+  }
+  
+  .cursor {
+    display: inline-block;
+    width: 10px; /* Set a fixed width */
+    color: orange;
+    animation: blink 0.5s step-end infinite;
+    vertical-align: middle; /* Align with the text */
+  }
+  
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  

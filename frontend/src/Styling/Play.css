@@ -1,0 +1,42 @@
+/* Play.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.play-container {
+  background-image: url('/public/images/play.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Existing styles */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  /* Apply font to all text inside the container */
+  font-family: 'Press Start 2P', sans-serif;
+  text-shadow: 
+        -2px -2px 0 black,   /* Top-left */
+         2px -2px 0 black,   /* Top-right */
+        -2px  2px 0 black,   /* Bottom-left */
+         2px  2px 0 black;   /* Bottom-right */
+}
+
+.sentence-row {
+  width: 80%;
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 10px 0;
+  color: #fff;
+  text-shadow: 2px 2px #000;
+}
+
+.typing-input {
+  width: 80%;
+  padding: 10px;
+  font-size: 1.5rem;
+  margin-top: 20px;
+  font-family: 'Press Start 2P', sans-serif;
+}
