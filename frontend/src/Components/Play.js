@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../Styling/Play.css';
 
 const Play = () => {
   const [words, setWords] = useState([]);
   const [asteroids, setAsteroids] = useState([]);
-  const [activeWord, setActiveWord] = useState(''); // Word of the closest asteroid
-  const [typedText, setTypedText] = useState(''); // Tracks the user's current input for the active word
+  const [activeWord, setActiveWord] = useState('');
+  const [typedText, setTypedText] = useState('');
+  const [asteroidsDestroyed, setAsteroidsDestroyed] = useState(0); // Track destroyed asteroids
   const asteroidIdRef = useRef(0);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [usedWords, setUsedWords] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Load words from words.txt
     fetch('/Text/words.txt')
       .then((response) => response.text())
       .then((text) => {
@@ -22,7 +25,6 @@ const Play = () => {
       })
       .catch((error) => console.error('Error loading words:', error));
 
-    // Get window size
     const updateWindowSize = () => {
       setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     };
@@ -35,15 +37,30 @@ const Play = () => {
   const spawnAsteroid = useCallback(() => {
     if (words.length === 0 || windowSize.width === 0) return;
 
-    const randomWord = words[Math.floor(Math.random() * words.length)];
+    const boundaryMargin = 50;
+
+    if (usedWords.length === words.length) {
+      setUsedWords([]);
+    }
+
+    const availableWords = words.filter((word) => !usedWords.includes(word));
+    const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+    
+    const size = Math.max(100, randomWord.length * 15);
+    const x = Math.random() * (windowSize.width - 2 * boundaryMargin - size) + boundaryMargin;
+    const y = -50;
+
     const newAsteroid = {
       id: asteroidIdRef.current++,
       word: randomWord,
-      x: Math.random() * (windowSize.width - 100),
-      y: -50,
+      x,
+      y,
+      size,
     };
+
     setAsteroids((prevAsteroids) => [...prevAsteroids, newAsteroid]);
-  }, [words, windowSize.width]);
+    setUsedWords((prevUsedWords) => [...prevUsedWords, randomWord]);
+  }, [words, windowSize.width, usedWords]);
 
   useEffect(() => {
     const spawnInterval = setInterval(spawnAsteroid, 5000);
@@ -52,17 +69,23 @@ const Play = () => {
 
   useEffect(() => {
     const moveAsteroids = () => {
-      setAsteroids((prevAsteroids) => {
-        return prevAsteroids.map((asteroid) => {
-          const newY = asteroid.y + 1; // Adjust speed as needed
+      setAsteroids((prevAsteroids) =>
+        prevAsteroids.map((asteroid) => {
+          const newY = asteroid.y + 1;
+          if (newY > windowSize.height) {
+            // Navigate to Finish screen if asteroid is out of bounds
+            navigate('/Finish', {
+              state: { asteroidsDestroyed },
+            });
+          }
           return { ...asteroid, y: newY };
-        });
-      });
+        })
+      );
     };
 
     const moveInterval = setInterval(moveAsteroids, 50);
     return () => clearInterval(moveInterval);
-  }, []);
+  }, [navigate, windowSize.height, asteroidsDestroyed]);
 
   useEffect(() => {
     if (asteroids.length === 0) {
@@ -87,12 +110,12 @@ const Play = () => {
       if (ignoredKeys.includes(key)) return;
 
       if (key === 'Enter') {
-        // Only proceed if the typedText matches the active word
         if (typedText === activeWord) {
           setAsteroids((prevAsteroids) =>
             prevAsteroids.filter((asteroid) => asteroid.word !== activeWord)
           );
-          setTypedText(''); // Clear input for the next word
+          setTypedText('');
+          setAsteroidsDestroyed((prev) => prev + 1); // Increment destroyed count
         }
       } else if (key === 'Backspace') {
         setTypedText((prev) => prev.slice(0, -1));
@@ -114,13 +137,12 @@ const Play = () => {
     <div className="play-container">
       <img src="/images/play.webp" alt="Background" className="background-image" />
       {asteroids.map((asteroid) => {
-        const size = Math.max(100, asteroid.word.length * 15); // Adjust multiplier as needed
-        const isActive = asteroid.word === activeWord; // Check if this is the active asteroid
+        const isActive = asteroid.word === activeWord;
         return (
           <div
             key={asteroid.id}
-            className={`asteroid ${isActive ? 'active-asteroid' : ''}`} // Add class for active asteroid styling
-            style={{ left: asteroid.x, top: asteroid.y, width: size, height: size }}
+            className={`asteroid ${isActive ? 'active-asteroid' : ''}`}
+            style={{ left: asteroid.x, top: asteroid.y, width: asteroid.size, height: asteroid.size }}
           >
             <img
               src="/images/asteroid.webp"
@@ -129,7 +151,6 @@ const Play = () => {
               style={{ width: '100%', height: '100%' }}
             />
             <div className="asteroid-word">
-              {/* Display each character with typing feedback */}
               {asteroid.word.split('').map((char, index) => {
                 const typedChar = isActive ? typedText[index] : undefined;
                 const className =

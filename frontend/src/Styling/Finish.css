@@ -23,9 +23,16 @@
          2px  2px 0 white;   /* Bottom-right */
 }
 
-
 .finish-container p {
+    font-family: 'Press Start 2P', sans-serif;
     font-size: 24px;
+    color: white;
+    padding-bottom: 20px;
+    text-shadow: 
+        -2px -2px 0 black,   /* Top-left */
+         2px -2px 0 black,   /* Top-right */
+        -2px  2px 0 black,   /* Bottom-left */
+         2px  2px 0 black;   /* Bottom-right */
     margin: 10px 0;
 }
 

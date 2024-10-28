@@ -24,13 +24,13 @@
     justify-content: center;
     border-radius: 50%;
     overflow: hidden;
-    padding: 10px; /* Reduced padding to bring text inside the asteroid */
+    padding: 10px;
 }
 
 /* Asteroid image styling */
 .asteroid-image {
-    border-radius: 50%; /* Ensure circular shape */
-    padding: 50px; /* Add padding around the image for centering */
+    border-radius: 50%;
+    padding: 20px;
     background-color: transparent;
 }
 
@@ -42,16 +42,16 @@
 /* Styles for each word character */
 .asteroid-word {
     position: absolute;
-    top: 50%; /* Center text vertically */
-    left: 50%; /* Center text horizontally */
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     color: white;
     font-family: 'Press Start 2P', sans-serif;
-    font-size: 0.9rem; /* Reduced font size for longer words */
-    max-width: 80%; /* Limit word width to asteroid bounds */
-    text-align: center; /* Center-align text */
-    white-space: nowrap; /* Prevent word wrapping */
-    pointer-events: none; /* Prevent text from being interacted with */
+    font-size: 0.9rem;
+    max-width: 80%;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 /* Typing feedback styles */
