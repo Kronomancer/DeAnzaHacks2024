@@ -1,35 +1,38 @@
+/* InputLogic container */
 .input-logic-container {
-    display: inline-block;
-    font-family: 'Press Start 2P', sans-serif;
-    font-size: 1.5rem;
-    color: white;
-    text-align: center;
+  display: inline-block;
+  font-family: 'Press Start 2P', sans-serif;
+  font-size: 1rem;
+  color: white;
+  text-align: center;
+}
+
+/* Word with cursor to the left */
+.active-line {
+  display: flex;
+  align-items: center;
+  color: white;
+}
+
+.cursor {
+  display: inline-block;
+  width: 10px;
+  color: orange;
+  animation: blink 0.5s step-end infinite;
+  margin-right: 2px; /* Space cursor slightly from the word */
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
   }
-  
-  .text-display {
-    display: inline-block;
-    color: white;
-  }
-  
-  .correct {
-    color: green;
-  }
-  
-  .incorrect {
-    color: red;
-  }
-  
-  .cursor {
-    display: inline-block;
-    width: 10px; /* Set a fixed width */
-    color: orange;
-    animation: blink 0.5s step-end infinite;
-    vertical-align: middle; /* Align with the text */
-  }
-  
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
-  
+}
+
+/* Correct and incorrect styles for typed characters */
+.correct {
+  color: green;
+}
+
+.incorrect {
+  color: red;
+}

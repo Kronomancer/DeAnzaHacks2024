@@ -1,37 +1,43 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import '../Styling/InputLogic.css';
 
-const InputLogic = ({ targetLines, onComplete }) => {
+const InputLogic = ({ activeLine, onComplete }) => {
   const [typedText, setTypedText] = useState('');
-  const [isCursorVisible, setIsCursorVisible] = useState(true);
+  const [isCursorVisible, setIsCursorVisible] = useState(false);
 
+  // Show cursor when there is an active word
   useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setIsCursorVisible((visible) => !visible);
-    }, 500);
+    setIsCursorVisible(activeLine !== '');
+    setTypedText(''); // Clear previous input when the active word changes
+  }, [activeLine]);
 
-    return () => clearInterval(cursorInterval);
-  }, []);
+  // Handle typing functionality and cursor progression
+  const handleKeyPress = useCallback(
+    (e) => {
+      const { key } = e;
+      const ignoredKeys = [
+        'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape',
+        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End',
+        'PageUp', 'PageDown',
+      ];
 
-  const handleKeyPress = useCallback((e) => {
-    const { key } = e;
-    const ignoredKeys = [
-      'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape', 'ArrowLeft',
-      'ArrowRight', 'ArrowUp', 'ArrowDown', 'Enter', 'Home', 'End', 'PageUp', 'PageDown'
-    ];
+      if (ignoredKeys.includes(key)) return;
 
-    if (ignoredKeys.includes(key)) return;
+      if (key === 'Enter') {
+        if (typedText === activeLine) { // If the entire word is correctly typed
+          onComplete(); // Trigger removal of the current asteroid
+          setTypedText(''); // Clear the typed text for the next word
+        }
+      } else if (key === 'Backspace') {
+        setTypedText((prev) => prev.slice(0, -1));
+      } else {
+        setTypedText((prev) => prev + key);
+      }
+    },
+    [typedText, activeLine, onComplete]
+  );
 
-    const firstLineTarget = targetLines && targetLines[0] ? targetLines[0] : '';
-    const updatedText = key === 'Backspace' ? typedText.slice(0, -1) : typedText + key;
-    setTypedText(updatedText);
-
-    if (updatedText.trim() === firstLineTarget) {
-      onComplete();
-      setTypedText('');
-    }
-  }, [typedText, targetLines, onComplete]);
-
+  // Listen for keydown events
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => {
@@ -39,35 +45,8 @@ const InputLogic = ({ targetLines, onComplete }) => {
     };
   }, [handleKeyPress]);
 
+  // Render the word with the cursor to the left and moving along with typing
   const renderTextWithCursor = () => {
-    const firstLine = targetLines && targetLines[0] ? targetLines[0] : '';
-    const secondLine = targetLines && targetLines[1] ? targetLines[1] : '';
-    const thirdLine = targetLines && targetLines[2] ? targetLines[2] : '';
-
-    const renderLine = (line, lineIndex) => {
-      const startIndex = lineIndex === 0 ? 0 : targetLines.slice(0, lineIndex).join(' ').length + lineIndex;
-      return line.split('').map((char, index) => {
-        const charIndex = startIndex + index;
-        const typedChar = typedText[charIndex];
-        const className = typedChar === undefined
-          ? ''
-          : typedChar === char
-          ? 'correct'
-          : 'incorrect';
-
-        return (
-          <span key={`${lineIndex}-${index}`} className={className}>
-            {char}
-          </span>
-        );
-      });
-    };
-
-    const firstLineChars = renderLine(firstLine, 0);
-    const secondLineChars = renderLine(secondLine, 1);
-    const thirdLineChars = renderLine(thirdLine, 2);
-
-    const cursorPosition = typedText.length;
     const cursorElement = (
       <span
         key="cursor"
@@ -78,22 +57,28 @@ const InputLogic = ({ targetLines, onComplete }) => {
       </span>
     );
 
-    if (firstLine && cursorPosition < firstLine.length) {
-      firstLineChars.splice(cursorPosition, 0, cursorElement);
-    } else if (secondLine && cursorPosition < firstLine.length + secondLine.length + 1) {
-      const secondLineCursorPos = cursorPosition - firstLine.length - 1;
-      secondLineChars.splice(secondLineCursorPos, 0, cursorElement);
-    } else if (thirdLine) {
-      const thirdLineCursorPos = cursorPosition - firstLine.length - secondLine.length - 2;
-      thirdLineChars.splice(thirdLineCursorPos, 0, cursorElement);
-    }
+    const wordChars = activeLine.split('').map((char, index) => {
+      const typedChar = typedText[index];
+      const className =
+        typedChar === undefined
+          ? ''
+          : typedChar === char
+          ? 'correct'
+          : 'incorrect';
 
+      return (
+        <span key={`active-${index}`} className={className}>
+          {char}
+        </span>
+      );
+    });
+
+    // Place the cursor directly to the left of the word, moving it along as the user types
     return (
-      <>
-        <div>{firstLineChars}</div>
-        <div>{secondLineChars}</div>
-        <div>{thirdLineChars}</div>
-      </>
+      <div className="active-line">
+        {cursorElement /* Start cursor at the left of the word */}
+        {wordChars}
+      </div>
     );
   };
 

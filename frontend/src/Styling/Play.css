@@ -1,42 +1,64 @@
-/* Play.css */
-
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
+/* Container for the game play area */
 .play-container {
-  background-image: url('/public/images/play.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  /* Existing styles */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-
-  /* Apply font to all text inside the container */
-  font-family: 'Press Start 2P', sans-serif;
-  text-shadow: 
-        -2px -2px 0 black,   /* Top-left */
-         2px -2px 0 black,   /* Top-right */
-        -2px  2px 0 black,   /* Bottom-left */
-         2px  2px 0 black;   /* Bottom-right */
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.sentence-row {
-  width: 80%;
-  text-align: center;
-  font-size: 1.5rem;
-  margin: 10px 0;
-  color: #fff;
-  text-shadow: 2px 2px #000;
+/* Background image styling */
+.background-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.typing-input {
-  width: 80%;
-  padding: 10px;
-  font-size: 1.5rem;
-  margin-top: 20px;
-  font-family: 'Press Start 2P', sans-serif;
+/* Asteroid styles */
+.asteroid {
+    position: absolute;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    padding: 10px; /* Reduced padding to bring text inside the asteroid */
+}
+
+/* Asteroid image styling */
+.asteroid-image {
+    border-radius: 50%; /* Ensure circular shape */
+    padding: 50px; /* Add padding around the image for centering */
+    background-color: transparent;
+}
+
+/* Highlight the active asteroid */
+.active-asteroid {
+    box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.7); /* Yellow glow */
+}
+
+/* Styles for each word character */
+.asteroid-word {
+    position: absolute;
+    top: 50%; /* Center text vertically */
+    left: 50%; /* Center text horizontally */
+    transform: translate(-50%, -50%);
+    color: white;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 0.9rem; /* Reduced font size for longer words */
+    max-width: 80%; /* Limit word width to asteroid bounds */
+    text-align: center; /* Center-align text */
+    white-space: nowrap; /* Prevent word wrapping */
+    pointer-events: none; /* Prevent text from being interacted with */
+}
+
+/* Typing feedback styles */
+.correct {
+    color: green;
+}
+
+.incorrect {
+    color: red;
 }
