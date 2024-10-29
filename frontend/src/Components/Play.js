@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../Styling/Play.css';
 
 const Play = () => {
+  const { state } = useLocation();
+  const difficulty = state?.difficulty || 'EASY';
+
+  const speed = difficulty === 'HARD' ? 5 : difficulty === 'NORMAL' ? 4 : 3;
+  const spawnRate = difficulty === 'HARD' ? 2000 : difficulty === 'NORMAL' ? 3500 : 5000;
+
   const [words, setWords] = useState([]);
   const [asteroids, setAsteroids] = useState([]);
   const [activeWord, setActiveWord] = useState('');
   const [typedText, setTypedText] = useState('');
-  const [asteroidsDestroyed, setAsteroidsDestroyed] = useState(0); // Track destroyed asteroids
+  const [asteroidsDestroyed, setAsteroidsDestroyed] = useState(0);
   const asteroidIdRef = useRef(0);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [usedWords, setUsedWords] = useState([]);
@@ -45,7 +51,7 @@ const Play = () => {
 
     const availableWords = words.filter((word) => !usedWords.includes(word));
     const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-    
+
     const size = Math.max(100, randomWord.length * 15);
     const x = Math.random() * (windowSize.width - 2 * boundaryMargin - size) + boundaryMargin;
     const y = -50;
@@ -63,17 +69,16 @@ const Play = () => {
   }, [words, windowSize.width, usedWords]);
 
   useEffect(() => {
-    const spawnInterval = setInterval(spawnAsteroid, 5000);
+    const spawnInterval = setInterval(spawnAsteroid, spawnRate);
     return () => clearInterval(spawnInterval);
-  }, [spawnAsteroid]);
+  }, [spawnAsteroid, spawnRate]); // Add spawnRate as a dependency here
 
   useEffect(() => {
     const moveAsteroids = () => {
       setAsteroids((prevAsteroids) =>
         prevAsteroids.map((asteroid) => {
-          const newY = asteroid.y + 1;
+          const newY = asteroid.y + speed;
           if (newY > windowSize.height) {
-            // Navigate to Finish screen if asteroid is out of bounds
             navigate('/Finish', {
               state: { asteroidsDestroyed },
             });
@@ -85,7 +90,7 @@ const Play = () => {
 
     const moveInterval = setInterval(moveAsteroids, 50);
     return () => clearInterval(moveInterval);
-  }, [navigate, windowSize.height, asteroidsDestroyed]);
+  }, [navigate, windowSize.height, asteroidsDestroyed, speed]);
 
   useEffect(() => {
     if (asteroids.length === 0) {
@@ -115,7 +120,7 @@ const Play = () => {
             prevAsteroids.filter((asteroid) => asteroid.word !== activeWord)
           );
           setTypedText('');
-          setAsteroidsDestroyed((prev) => prev + 1); // Increment destroyed count
+          setAsteroidsDestroyed((prev) => prev + 1);
         }
       } else if (key === 'Backspace') {
         setTypedText((prev) => prev.slice(0, -1));

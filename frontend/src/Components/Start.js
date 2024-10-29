@@ -1,5 +1,3 @@
-// Start.js
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styling/Start.css';
@@ -8,7 +6,7 @@ const Start = () => {
     const navigate = useNavigate();
 
     const handleStart = () => {
-        navigate('/play');
+        navigate('/lobby');
     };
 
     return (

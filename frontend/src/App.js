@@ -1,9 +1,8 @@
-// App.js
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Start from './Components/Start';
 import Play from './Components/Play';
+import Lobby from './Components/Lobby';
 import Finish from './Components/Finish';
 import './Styling/App.css';
 
@@ -13,6 +12,7 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<Start />} />
+                    <Route path="/lobby" element={<Lobby />} />
                     <Route path="/play" element={<Play />} />
                     <Route path="/finish" element={<Finish />} />
                 </Routes>
