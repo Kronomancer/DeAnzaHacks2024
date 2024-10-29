@@ -5,15 +5,22 @@ import '../Styling/Start.css';
 const Start = () => {
     const navigate = useNavigate();
 
-    const handleStart = () => {
-        navigate('/lobby');
+    const handleLogin = () => {
+        navigate('/login');
+    };
+
+    const handleRegister = () => {
+        navigate('/register');
     };
 
     return (
         <div className="start-container">
             <h1 className="start-title">LuneType</h1>
-            <button className="start-button" onClick={handleStart}>
-                START
+            <button className="start-button" onClick={handleLogin}>
+                LOGIN
+            </button>
+            <button className="start-button" onClick={handleRegister}>
+                REGISTER
             </button>
         </div>
     );

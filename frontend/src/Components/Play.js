@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../Styling/Play.css';
+import { db, auth } from '../Components/FirebaseConfig'; // Import Firebase and Firestore
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const Play = () => {
   const { state } = useLocation();
@@ -71,7 +73,31 @@ const Play = () => {
   useEffect(() => {
     const spawnInterval = setInterval(spawnAsteroid, spawnRate);
     return () => clearInterval(spawnInterval);
-  }, [spawnAsteroid, spawnRate]); // Add spawnRate as a dependency here
+  }, [spawnAsteroid, spawnRate]);
+
+  const handleGameEnd = useCallback(async () => {
+    // If the difficulty is HARD, attempt to update the highest score
+    if (difficulty === 'HARD') {
+      const user = auth.currentUser;
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const currentHighScore = userData.highestScore || 0;
+
+          // Update highest score if the current score is greater
+          if (asteroidsDestroyed > currentHighScore) {
+            await updateDoc(userRef, { highestScore: asteroidsDestroyed });
+          }
+        }
+      }
+    }
+
+    // Navigate to Finish screen with the score
+    navigate('/Finish', { state: { asteroidsDestroyed } });
+  }, [difficulty, asteroidsDestroyed, navigate]);
 
   useEffect(() => {
     const moveAsteroids = () => {
@@ -79,9 +105,7 @@ const Play = () => {
         prevAsteroids.map((asteroid) => {
           const newY = asteroid.y + speed;
           if (newY > windowSize.height) {
-            navigate('/Finish', {
-              state: { asteroidsDestroyed },
-            });
+            handleGameEnd(); // Trigger the game end handling
           }
           return { ...asteroid, y: newY };
         })
@@ -90,15 +114,13 @@ const Play = () => {
 
     const moveInterval = setInterval(moveAsteroids, 50);
     return () => clearInterval(moveInterval);
-  }, [navigate, windowSize.height, asteroidsDestroyed, speed]);
+  }, [windowSize.height, speed, handleGameEnd]);
 
   useEffect(() => {
     if (asteroids.length === 0) {
       setActiveWord('');
     } else {
-      const closestAsteroid = asteroids.reduce((prev, curr) =>
-        curr.y > prev.y ? curr : prev
-      );
+      const closestAsteroid = asteroids.reduce((prev, curr) => (curr.y > prev.y ? curr : prev));
       setActiveWord(closestAsteroid.word);
     }
   }, [asteroids]);
@@ -107,9 +129,21 @@ const Play = () => {
     (e) => {
       const { key } = e;
       const ignoredKeys = [
-        'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape',
-        'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End',
-        'PageUp', 'PageDown',
+        'Shift',
+        'Control',
+        'Alt',
+        'Meta',
+        'CapsLock',
+        'Tab',
+        'Escape',
+        'ArrowLeft',
+        'ArrowRight',
+        'ArrowUp',
+        'ArrowDown',
+        'Home',
+        'End',
+        'PageUp',
+        'PageDown',
       ];
 
       if (ignoredKeys.includes(key)) return;
@@ -159,11 +193,7 @@ const Play = () => {
               {asteroid.word.split('').map((char, index) => {
                 const typedChar = isActive ? typedText[index] : undefined;
                 const className =
-                  typedChar === undefined
-                    ? ''
-                    : typedChar === char
-                    ? 'correct'
-                    : 'incorrect';
+                  typedChar === undefined ? '' : typedChar === char ? 'correct' : 'incorrect';
                 return (
                   <span key={index} className={className}>
                     {char}

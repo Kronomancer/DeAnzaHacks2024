@@ -4,6 +4,8 @@ import Start from './Components/Start';
 import Play from './Components/Play';
 import Lobby from './Components/Lobby';
 import Finish from './Components/Finish';
+import Login from './Components/Login'; 
+import Register from './Components/Register';
 import './Styling/App.css';
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
                     <Route path="/lobby" element={<Lobby />} />
                     <Route path="/play" element={<Play />} />
                     <Route path="/finish" element={<Finish />} />
+                    <Route path="/login" element={<Login />} />        
+                    <Route path="/register" element={<Register />} /> 
                 </Routes>
             </Router>
         </div>

@@ -1,0 +1,110 @@
+/* Register.css */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('/public/images/background.webp');
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+}
+
+.register-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: 'Press Start 2P', sans-serif;
+    text-align: center;
+}
+
+.register-box h2 {
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 24px;
+    text-align: center;
+}
+
+.register-box label {
+    display: block;
+    font-size: 14px;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: left;
+    padding-top: 10px;
+}
+
+/* Password input container with eye icon */
+.password-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.register-box input {
+    width: 86%;
+    padding: 15px; /* Increased padding for readability */
+    padding-right: 40px; /* Extra space for the icon */
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.register-box input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Style for the eye icon */
+.toggle-password-visibility {
+    position: absolute;
+    right: 10px;
+    top: 35%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.register-box button {
+    width: 100%;
+    padding: 15px;
+    background-color: #4a90e2;
+    margin-top: 10px;
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-family: 'Press Start 2P', sans-serif;
+}
+
+.register-box button:hover {
+    background-color: #357abd;
+}
+
+/* Error message styling with consistent padding */
+.error-message {
+    color: #EF4444;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 15px; /* Consistent bottom margin */
+    text-align: left;
+    padding-left: 2px; /* Adjusted left padding for alignment */
+}
+
+/* Optional input error styling */
+.input-error {
+    border: 1px solid #EF4444; /* Red border for input errors */
+}
