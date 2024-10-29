@@ -1,20 +1,18 @@
-// Login.js
 import React, { useState } from "react";
 import "../Styling/Login.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa"; // Import the arrow icon
 import { auth, db } from "../Components/FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from react-router-dom
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Login() {
   const [hidePassword, setHidePassword] = useState(true);
   const [firebaseError, setFirebaseError] = useState("");
   const navigate = useNavigate(); // Initialize navigate
 
-  // Yup validation schema
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
     password: Yup.string().required("Password is required"),
@@ -22,24 +20,18 @@ function Login() {
 
   const handleLogin = async (values) => {
     const { username, password } = values;
-    setFirebaseError(""); // Reset Firebase error
+    setFirebaseError("");
 
     try {
-      // Query Firestore to get the email associated with the username
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("username", "==", username));
       const querySnapshot = await getDocs(q);
 
-      // Check if we found a matching user
       if (!querySnapshot.empty) {
-        // Extract the email from the document
         const userDoc = querySnapshot.docs[0];
         const email = userDoc.data().email;
 
-        // Sign in using the retrieved email and the provided password
         await signInWithEmailAndPassword(auth, email, password);
-        
-        // Navigate to the Lobby screen
         navigate("/lobby");
       } else {
         setFirebaseError("Username not found");
@@ -53,7 +45,10 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2>Login</h2>
+        <div className="back-arrow" onClick={() => navigate("/start")}>
+          <FaArrowLeft />
+        </div>
+        <h2>LOGIN</h2>
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={validationSchema}

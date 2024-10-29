@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import "../Styling/Register.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa"; // Import the arrow icon
 import { auth, db } from "../Components/FirebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { setDoc, doc, Timestamp } from "firebase/firestore";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Register() {
   const [hidePassword, setHidePassword] = useState(true);
   const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
   const [firebaseError, setFirebaseError] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
-  // Yup validation schema
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
     email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -26,11 +27,9 @@ function Register() {
     try {
       setFirebaseError("");
 
-      // Create user with Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
-      // Save additional user data to Firestore
       await setDoc(doc(db, "users", user.uid), {
         username: values.username,
         email: values.email,
@@ -47,6 +46,9 @@ function Register() {
   return (
     <div className="register-container">
       <div className="register-box">
+        <div className="back-arrow" onClick={() => navigate("/start")}>
+          <FaArrowLeft />
+        </div>
         <h2>REGISTER</h2>
         <Formik
           initialValues={{

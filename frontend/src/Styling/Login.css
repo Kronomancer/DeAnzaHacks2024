@@ -107,3 +107,14 @@
 .input-error {
     border: 1px solid #EF4444; /* Red border for input errors */
 }
+
+.back-arrow {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    color: #ffffff;
+  }
+  
+  
