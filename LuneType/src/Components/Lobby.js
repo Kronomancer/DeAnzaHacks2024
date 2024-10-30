@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styling/Lobby.css';
-import { auth, db } from '../Components/FirebaseConfig';
+import { auth, db } from './FirebaseConfig';
 import { signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 
 const Lobby = () => {
     const [selectedDifficulty, setSelectedDifficulty] = useState(null);
     const [username, setUsername] = useState('');
     const [showHelp, setShowHelp] = useState(false);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
+    const [leaderboardData, setLeaderboardData] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,6 +32,27 @@ const Lobby = () => {
         };
 
         fetchUsername();
+    }, []);
+
+    useEffect(() => {
+        const fetchLeaderboard = async () => {
+            try {
+                const leaderboardRef = collection(db, "users");
+                const leaderboardQuery = query(leaderboardRef, orderBy("highestScore", "desc"), limit(10));
+                const querySnapshot = await getDocs(leaderboardQuery);
+                
+                const leaderboard = querySnapshot.docs.map(doc => ({
+                    username: doc.data().username,
+                    score: doc.data().highestScore || 0
+                }));
+
+                setLeaderboardData(leaderboard);
+            } catch (error) {
+                console.error("Error fetching leaderboard data:", error);
+            }
+        };
+
+        fetchLeaderboard();
     }, []);
 
     const handlePlay = () => {
@@ -55,6 +78,10 @@ const Lobby = () => {
 
     const toggleHelpModal = () => {
         setShowHelp(!showHelp);
+    };
+
+    const toggleLeaderboardModal = () => {
+        setShowLeaderboard(!showLeaderboard);
     };
 
     return (
@@ -103,6 +130,16 @@ const Lobby = () => {
                 </button>
             </div>
 
+            {/* Leaderboard Button in a Separate Container Below Content */}
+            <div className="leaderboard-container">
+                <button 
+                    className="leaderboard-button" 
+                    onClick={toggleLeaderboardModal}
+                >
+                    LEADERBOARD
+                </button>
+            </div>
+
             {showHelp && (
                 <div className="help-modal-overlay" onClick={toggleHelpModal}>
                     <div className="help-modal" onClick={(e) => e.stopPropagation()}>
@@ -114,6 +151,34 @@ const Lobby = () => {
                         <p><strong>Losing Condition:</strong><br /> The player loses if an asteroid reaches the bottom of the screen and exits the frame.</p>
                         <p><strong>Leaderboard:</strong><br /> The leaderboard only counts attempts in the HARD difficulty.</p>
                         <button className="close-button" onClick={toggleHelpModal}>Close</button>
+                    </div>
+                </div>
+            )}
+
+            {showLeaderboard && (
+                <div className="leaderboard-modal-overlay" onClick={toggleLeaderboardModal}>
+                    <div className="leaderboard-modal" onClick={(e) => e.stopPropagation()}>
+                        <h3>LEADERBOARD</h3>
+                        <div className="leaderboard-content">
+                            <div className="leaderboard-header">
+                                <span>Username:</span>
+                                <span>Score:</span>
+                            </div>
+                            {leaderboardData.length > 0 ? (
+                                leaderboardData.map((player, index) => (
+                                    <div key={index} className="leaderboard-row">
+                                        <span>{player.username}</span>
+                                        <span>{player.score}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="leaderboard-row">
+                                    <span>N/A</span>
+                                    <span>N/A</span>
+                                </div>
+                            )}
+                        </div>
+                        <button className="close-button" onClick={toggleLeaderboardModal}>Close</button>
                     </div>
                 </div>
             )}
