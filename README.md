@@ -6,6 +6,7 @@ LuneType is a space-themed typing practice game designed to improve typing skill
 
 ## Gameplay
 
+- **Modes**: LuneType features three difficulty levels: Easy, Normal, and Hard. Each level increases spawn rates and asteroid speed.
 - **Objective**: Type the word displayed on each asteroid before it reaches the bottom of the screen.
 - **Asteroids**: Each asteroid spawns at the top with a unique word.
 - **Galaxy Background**: The game features a dynamic galaxy background to enhance the space theme.
