@@ -1,0 +1,29 @@
+/* Overlay effect for transitions to cover the entire viewport */
+.app-container::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #333; /* Dark color for transition */
+    opacity: 1;
+    z-index: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Fade effect for inner content, applied when each route loads */
+.motion-container h1, .motion-container p {
+    opacity: 0;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Fade-in animation keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

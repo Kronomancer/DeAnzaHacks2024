@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styling/Lobby.css';
 import { auth, db } from './FirebaseConfig';
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 
 const Lobby = () => {
@@ -11,11 +11,11 @@ const Lobby = () => {
     const [showHelp, setShowHelp] = useState(false);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [leaderboardData, setLeaderboardData] = useState([]);
+    const [loading, setLoading] = useState(true); // Loading state for better UX
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUsername = async () => {
-            const user = auth.currentUser;
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
                     const userRef = doc(db, "users", user.uid);
@@ -24,14 +24,20 @@ const Lobby = () => {
                     if (userDoc.exists()) {
                         const userData = userDoc.data();
                         setUsername(userData.username || 'User');
+                    } else {
+                        setUsername('User'); // Fallback if username not found
                     }
                 } catch (error) {
                     console.error("Error fetching username:", error);
+                    setUsername('User'); // Fallback in case of an error
                 }
+            } else {
+                setUsername('User');
             }
-        };
+            setLoading(false); // Set loading to false after data retrieval
+        });
 
-        fetchUsername();
+        return () => unsubscribe(); // Clean up the listener on unmount
     }, []);
 
     useEffect(() => {
@@ -88,7 +94,9 @@ const Lobby = () => {
         <div className="lobby-container">
             <img src="/images/play.webp" alt="Background" className="background-image" />
 
-            <div className="username-label">Ready to Play, {username}?</div>
+            <div className="username-label">
+                {loading ? 'Loading...' : `Ready to Play, ${username}?`}
+            </div>
 
             <button className="sign-out-button" onClick={handleLogout}>Sign Out</button>
             
