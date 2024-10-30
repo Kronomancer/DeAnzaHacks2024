@@ -1,9 +1,29 @@
 /* Lobby.css */
+
+/* Main Container Styling */
 .lobby-container {
     position: relative;
     height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
 }
 
+/* Username Label Styling */
+.username-label {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    padding-top: 40px;
+    transform: translateX(-50%);
+    font-size: 20px;
+    font-family: 'Press Start 2P', sans-serif;
+    color: #ffffff;
+    z-index: 2;
+}
+
+/* Background Image Styling */
 .background-image {
     position: absolute;
     width: 100%;
@@ -12,12 +32,35 @@
     z-index: -1;
 }
 
+/* Sign Out Button Styling */
+.sign-out-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 16px;
+    background-color: #ff4c4c;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 20px;
+    font-family: 'Press Start 2P', sans-serif;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 2;
+}
+
+.sign-out-button:hover {
+    background-color: #ff2d2d;
+    transform: scale(1.05);
+}
+
+/* Content Container Styling */
 .content-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(44, 44, 44, 0.744);
     padding: 20px;
     border-radius: 15px;
     backdrop-filter: blur(10px);
@@ -26,6 +69,7 @@
     max-width: 600px;
 }
 
+/* Title Styling */
 .lobby-title {
     font-family: monospace;
     font-size: 60px;
@@ -33,6 +77,7 @@
     padding-bottom: 20px;
 }
 
+/* Difficulty Buttons Styling */
 .difficulty-buttons {
     display: flex;
     justify-content: space-around;
@@ -50,23 +95,120 @@
     transition: background-color 0.3s;
 }
 
-.difficulty-button.selected {
+/* Color Styles for Each Selected Difficulty */
+.difficulty-button.easy {
     background-color: green;
     color: #ffffff;
 }
 
+.difficulty-button.normal {
+    background-color: yellow;
+    color: #000000;
+}
+
+.difficulty-button.hard {
+    background-color: red;
+    color: #ffffff;
+}
+
+/* Play Button Styling */
 .play-button {
     font-family: 'Press Start 2P', sans-serif;
     font-size: 20px;
     padding: 20px;
+    border-radius: 15px;
     cursor: pointer;
     background-color: #ffffff;
     color: #000000;
     border: none;
     transition: opacity 0.3s;
+    margin-bottom: 20px; /* Adds spacing below the play button */
+    margin-right: 15px; /* Adds spacing between play and help button */
 }
 
 .play-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Help Button Styling - Matches Play Button */
+.help-button {
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 20px;
+    padding: 20px;
+    cursor: pointer;
+    background-color: #4a90e2;
+    color: #ffffff;
+    border: none;
+    border-radius: 15px;
+    transition: background-color 0.3s ease;
+}
+
+.help-button:hover {
+    background-color: #357abd;
+}
+
+
+/* Help Modal Overlay */
+.help-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+/* Help Modal Content */
+.help-modal {
+    background-color: #333;
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    width: 35%;
+    max-width: 600px;
+    font-family: Arial, sans-serif;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.help-modal strong {
+    font-family: 'Press Start 2P', sans-serif;
+    font-weight: bold;
+}
+
+.help-modal h3 {
+    align-self: center;
+    font-family: 'Press Start 2P', sans-serif;
+    margin-bottom: 15px;
+    font-size: 30px;
+    padding-bottom: 20px;
+}
+
+.help-modal p {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.close-button {
+    align-self: center;
+    margin-top: 20px;
+    padding: 10px 15px;
+    font-size: 18px;
+    color: #ffffff;
+    background-color: #ff4c4c;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', sans-serif;
+}
+
+.close-button:hover {
+    background-color: #ff2d2d;
 }

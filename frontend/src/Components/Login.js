@@ -1,17 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Styling/Login.css";
-import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa"; // Import the arrow icon
+import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa";
 import { auth, db } from "../Components/FirebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [hidePassword, setHidePassword] = useState(true);
   const [firebaseError, setFirebaseError] = useState("");
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+    if (isLoggedIn) {
+      navigate("/lobby");
+    }
+  }, [navigate]);
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
@@ -32,6 +39,7 @@ function Login() {
         const email = userDoc.data().email;
 
         await signInWithEmailAndPassword(auth, email, password);
+        localStorage.setItem("isLoggedIn", "true");
         navigate("/lobby");
       } else {
         setFirebaseError("Username not found");
