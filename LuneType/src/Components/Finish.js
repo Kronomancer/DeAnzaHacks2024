@@ -2,49 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../Styling/Finish.css';
 import { auth, db } from '../Components/FirebaseConfig';
-import { doc, getDoc, updateDoc, collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, orderBy, query } from 'firebase/firestore';
 
 const Finish = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { asteroidsDestroyed } = location.state || { asteroidsDestroyed: 0 };
-    const [highestScore, setHighestScore] = useState(0);
+    const { asteroidsDestroyed, difficulty } = location.state || { asteroidsDestroyed: 0, difficulty: 'EASY' };
+    const [highestScore, setHighestScore] = useState(null); // null indicates not loaded yet
+    const [loadingScore, setLoadingScore] = useState(true);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [leaderboardData, setLeaderboardData] = useState([]);
+    const [loadingLeaderboard, setLoadingLeaderboard] = useState(false);
 
     useEffect(() => {
-        const updateHighestScore = async () => {
+        const fetchAndUpdateHighestScore = async () => {
+            setLoadingScore(true); // Start loading state
             const user = auth.currentUser;
-            if (user) {
-                try {
-                    const userRef = doc(db, "users", user.uid);
-                    const userDoc = await getDoc(userRef);
+            if (!user) {
+                setLoadingScore(false);
+                return;
+            }
 
-                    let currentHighestScore = 0;
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        currentHighestScore = userData.highestScore || 0;
-                    } else {
-                        await updateDoc(userRef, { highestScore: 0 });
-                    }
+            try {
+                const userRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userRef);
 
-                    if (asteroidsDestroyed > currentHighestScore) {
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const currentHighestScore = userData.highestScore || 0;
+
+                    // Update high score only if it's HARD mode and score is higher
+                    if (difficulty === 'HARD' && asteroidsDestroyed > currentHighestScore) {
                         await updateDoc(userRef, { highestScore: asteroidsDestroyed });
-                        setHighestScore(asteroidsDestroyed);
+                        setHighestScore(asteroidsDestroyed); // Set to the new high score
                     } else {
-                        setHighestScore(currentHighestScore);
+                        setHighestScore(currentHighestScore); // Set to the existing high score
                     }
-                } catch (error) {
-                    console.error("Error updating highest score:", error);
+                } else {
+                    await setDoc(userRef, { highestScore: 0 });
+                    setHighestScore(0);
                 }
+            } catch (error) {
+                console.error("Error fetching or updating highest score:", error);
+            } finally {
+                setLoadingScore(false); // End loading state
             }
         };
 
-        updateHighestScore();
-    }, [asteroidsDestroyed]);
+        fetchAndUpdateHighestScore();
+    }, [asteroidsDestroyed, difficulty]);
 
-    // Updated Play Again handler with authentication check
     const handlePlayAgain = async () => {
         const user = auth.currentUser;
 
@@ -54,7 +62,7 @@ const Finish = () => {
                 const userDoc = await getDoc(userRef);
 
                 if (userDoc.exists()) {
-                    navigate('/lobby'); // Navigate to Lobby if user is authenticated
+                    navigate('/lobby');
                 } else {
                     console.error("User document not found in Firestore.");
                     navigate('/login');
@@ -64,7 +72,7 @@ const Finish = () => {
                 navigate('/login');
             }
         } else {
-            navigate('/login'); // Navigate to login if no user is authenticated
+            navigate('/login');
         }
     };
 
@@ -74,19 +82,22 @@ const Finish = () => {
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
+            setLoadingLeaderboard(true);
             try {
                 const leaderboardRef = collection(db, "users");
                 const leaderboardQuery = query(leaderboardRef, orderBy("highestScore", "desc"));
                 const leaderboardSnapshot = await getDocs(leaderboardQuery);
 
                 const leaderboard = leaderboardSnapshot.docs.map(doc => ({
-                    username: doc.data().username,  // Ensure username is retrieved
+                    username: doc.data().username,
                     score: doc.data().highestScore || 0
                 }));
 
                 setLeaderboardData(leaderboard);
             } catch (error) {
                 console.error("Error fetching leaderboard data:", error);
+            } finally {
+                setLoadingLeaderboard(false);
             }
         };
 
@@ -99,9 +110,15 @@ const Finish = () => {
         <div className="finish-container">
             <h1>Game Over</h1>
             <p>Asteroids Destroyed: {asteroidsDestroyed}</p>
-            <p>Highest Score: {highestScore}</p>
-            
-            {/* Leaderboard Button */}
+            <p>
+                Highest Score: 
+                {loadingScore ? (
+                    <span className="loading-indicator">Loading...</span>
+                ) : (
+                    highestScore
+                )}
+            </p>
+
             <button className="leaderboard-button" onClick={toggleLeaderboardModal}>
                 LEADERBOARD
             </button>
@@ -119,7 +136,11 @@ const Finish = () => {
                                 <span>Username</span>
                                 <span>Score</span>
                             </div>
-                            {leaderboardData.length > 0 ? (
+                            {loadingLeaderboard ? (
+                                <div className="leaderboard-row">
+                                    <span>Loading...</span>
+                                </div>
+                            ) : leaderboardData.length > 0 ? (
                                 leaderboardData.map((player, index) => (
                                     <div key={index} className="leaderboard-row">
                                         <span>{player.username}</span>

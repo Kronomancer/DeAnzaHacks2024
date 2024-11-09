@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../Styling/Play.css';
-import { db, auth } from '../Components/FirebaseConfig'; // Import Firebase and Firestore
+import { db, auth } from '../Components/FirebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const Play = () => {
   const { state } = useLocation();
   const difficulty = state?.difficulty || 'EASY';
 
+  // Game settings based on difficulty
   const speed = difficulty === 'HARD' ? 5 : difficulty === 'NORMAL' ? 4 : 3;
   const spawnRate = difficulty === 'HARD' ? 2000 : difficulty === 'NORMAL' ? 3500 : 5000;
 
@@ -21,6 +22,10 @@ const Play = () => {
   const [usedWords, setUsedWords] = useState([]);
   const navigate = useNavigate();
 
+  // High score update flag
+  const shouldUpdateHighScore = difficulty === 'HARD';
+
+  // Load words and set window size on mount
   useEffect(() => {
     fetch('/Text/words.txt')
       .then((response) => response.text())
@@ -42,6 +47,7 @@ const Play = () => {
     return () => window.removeEventListener('resize', updateWindowSize);
   }, []);
 
+  // Spawn a new asteroid at random positions
   const spawnAsteroid = useCallback(() => {
     if (words.length === 0 || windowSize.width === 0) return;
 
@@ -70,52 +76,65 @@ const Play = () => {
     setUsedWords((prevUsedWords) => [...prevUsedWords, randomWord]);
   }, [words, windowSize.width, usedWords]);
 
+  // Set interval for spawning asteroids
   useEffect(() => {
     const spawnInterval = setInterval(spawnAsteroid, spawnRate);
     return () => clearInterval(spawnInterval);
   }, [spawnAsteroid, spawnRate]);
 
-  const handleGameEnd = useCallback(async () => {
-    // If the difficulty is HARD, attempt to update the highest score
-    if (difficulty === 'HARD') {
-      const user = auth.currentUser;
-      if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        const userDoc = await getDoc(userRef);
+  // Update high score only if on HARD mode
+  const updateHighScore = useCallback(async () => {
+    if (!shouldUpdateHighScore) return;
 
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          const currentHighScore = userData.highestScore || 0;
+    const user = auth.currentUser;
+    if (user) {
+      const userRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userRef);
 
-          // Update highest score if the current score is greater
-          if (asteroidsDestroyed > currentHighScore) {
-            await updateDoc(userRef, { highestScore: asteroidsDestroyed });
-          }
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const currentHighScore = userData.highestScore || 0;
+
+        if (asteroidsDestroyed > currentHighScore) {
+          await updateDoc(userRef, { highestScore: asteroidsDestroyed });
         }
       }
     }
+  }, [asteroidsDestroyed, shouldUpdateHighScore]);
 
-    // Navigate to Finish screen with the score
-    navigate('/Finish', { state: { asteroidsDestroyed } });
-  }, [difficulty, asteroidsDestroyed, navigate]);
+  // Trigger game end
+  const handleGameEnd = useCallback(async () => {
+    await updateHighScore();  // Update high score only if on HARD mode
+    navigate('/Finish', { state: { asteroidsDestroyed, difficulty } });  // Pass difficulty to Finish
+  }, [updateHighScore, asteroidsDestroyed, navigate, difficulty]);
 
+  // Move asteroids and check if they go off-screen
   useEffect(() => {
     const moveAsteroids = () => {
-      setAsteroids((prevAsteroids) =>
-        prevAsteroids.map((asteroid) => {
-          const newY = asteroid.y + speed;
-          if (newY > windowSize.height) {
-            handleGameEnd(); // Trigger the game end handling
-          }
-          return { ...asteroid, y: newY };
-        })
-      );
+      setAsteroids((prevAsteroids) => {
+        const updatedAsteroids = prevAsteroids.map((asteroid) => ({
+          ...asteroid,
+          y: asteroid.y + speed,
+        }));
+        
+        // Check if any asteroid has gone off-screen
+        const hasAsteroidGoneOffScreen = updatedAsteroids.some(
+          (asteroid) => asteroid.y > windowSize.height
+        );
+
+        if (hasAsteroidGoneOffScreen) {
+          handleGameEnd(); // End the game if an asteroid goes off-screen
+        }
+
+        return updatedAsteroids;
+      });
     };
 
     const moveInterval = setInterval(moveAsteroids, 50);
     return () => clearInterval(moveInterval);
   }, [windowSize.height, speed, handleGameEnd]);
 
+  // Set active word as the closest asteroid
   useEffect(() => {
     if (asteroids.length === 0) {
       setActiveWord('');
@@ -125,6 +144,7 @@ const Play = () => {
     }
   }, [asteroids]);
 
+  // Handle typing logic for destroying asteroids
   const handleTyping = useCallback(
     (e) => {
       const { key } = e;
@@ -165,6 +185,7 @@ const Play = () => {
     [typedText, activeWord]
   );
 
+  // Attach typing event listener
   useEffect(() => {
     window.addEventListener('keydown', handleTyping);
     return () => {
@@ -174,7 +195,7 @@ const Play = () => {
 
   return (
     <div className="play-container">
-      <img src="/images/play.webp" alt="Background" className="background-image" />
+      <img src="/Images/play.webp" alt="Background" className="background-image" />
       {asteroids.map((asteroid) => {
         const isActive = asteroid.word === activeWord;
         return (

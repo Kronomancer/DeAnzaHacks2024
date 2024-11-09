@@ -16,7 +16,7 @@ html, body {
     align-items: center;
     justify-content: center;
     min-height: 100vh; /* Ensures it covers full screen */
-    background-image: url('/public/images/start.webp');
+    background-image: url('/public/Images/start.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

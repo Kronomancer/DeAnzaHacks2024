@@ -27,16 +27,20 @@ function Register() {
     try {
       setFirebaseError("");
 
+      // Create the user with Firebase authentication
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
+      // Store user data in Firestore
       await setDoc(doc(db, "users", user.uid), {
         username: values.username,
         email: values.email,
         created: Timestamp.now(),
       });
 
+      // Show success alert and navigate to Login screen
       alert("Registration successful!");
+      navigate("/login"); // Navigate to Login page
     } catch (error) {
       setFirebaseError(error.message);
       console.error("Registration Error:", error);

@@ -160,7 +160,7 @@ photograph
 procedure
 quadrant
 quadratic
-qualified
+qualifier
 quarantine
 quarterly
 quenching
