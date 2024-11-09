@@ -92,7 +92,7 @@ const Lobby = () => {
 
     return (
         <div className="lobby-container">
-            <img src="/images/play.webp" alt="Background" className="background-image" />
+            <img src="/Images/play.webp" alt="Background" className="background-image" />
 
             <div className="username-label">
                 {loading ? 'Loading...' : `Ready to Play, ${username}?`}
